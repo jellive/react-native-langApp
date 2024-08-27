@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Animated, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 
@@ -19,14 +19,15 @@ const Box = styled.View`
 const AnimatedBox = Animated.createAnimatedComponent(Box);
 
 function App(): React.JSX.Element {
-  const Y = new Animated.Value(0);
-
+  const [up, setUp] = useState(false);
+  const Y = useRef(new Animated.Value(0)).current; // 재렌더링 방지(재렌더링 되면 이게 다시 0이 되면서 애니메이션이 끝나면 원래대로 돌아옴)
+  const toggleUp = () => setUp(prev => !prev);
   const moveUp = () => {
     Animated.timing(Y, {
-      toValue: -200,
+      toValue: up ? 200 : -200,
       useNativeDriver: true,
-    }).start();
-    // Animated.spring은 bounciness 혹은 tension, friction을 써서 스프링처럼 마지막에 튕기는 애니메이션을 줄 수 있음.
+    }).start(toggleUp);
+    // Animated.spring은 bounciness, easing 혹은 tension, friction을 써서 스프링처럼 마지막에 튕기는 애니메이션을 줄 수 있음.
   };
   return (
     <Container>
