@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {Animated, TouchableOpacity} from 'react-native';
+import {Animated, TouchableOpacity, Pressable} from 'react-native';
 import styled from 'styled-components/native';
 
 const Container = styled.View`
@@ -20,24 +20,34 @@ const AnimatedBox = Animated.createAnimatedComponent(Box);
 
 function App(): React.JSX.Element {
   const [up, setUp] = useState(false);
-  const Y = useRef(new Animated.Value(0)).current; // 재렌더링 방지(재렌더링 되면 이게 다시 0이 되면서 애니메이션이 끝나면 원래대로 돌아옴)
+  const Y_POSITION = useRef(new Animated.Value(-200)).current; // 재렌더링 방지(재렌더링 되면 이게 다시 0이 되면서 애니메이션이 끝나면 원래대로 돌아옴)
   const toggleUp = () => setUp(prev => !prev);
   const moveUp = () => {
-    Animated.timing(Y, {
+    Animated.timing(Y_POSITION, {
       toValue: up ? 200 : -200,
       useNativeDriver: true,
     }).start(toggleUp);
     // Animated.spring은 bounciness, easing 혹은 tension, friction을 써서 스프링처럼 마지막에 튕기는 애니메이션을 줄 수 있음.
   };
+  const opacity = Y_POSITION.interpolate({
+    inputRange: [-200, 0, 200], // 입력 값의 범위, 항상 음수부터 양수로 올라가야 함.
+    outputRange: [1, 0, 1], // 출력 값의 범위
+  });
+  const borderRadius = Y_POSITION.interpolate({
+    inputRange: [-200, 200],
+    outputRange: [100, 0],
+  });
   return (
     <Container>
-      <TouchableOpacity onPress={moveUp}>
+      <Pressable onPress={moveUp}>
         <AnimatedBox
           style={{
-            transform: [{translateY: Y}],
+            opacity,
+            borderRadius,
+            transform: [{translateY: Y_POSITION}],
           }}
         />
-      </TouchableOpacity>
+      </Pressable>
     </Container>
   );
 }
