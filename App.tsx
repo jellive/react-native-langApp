@@ -21,6 +21,23 @@ const Card = styled(Animated.createAnimatedComponent(View))`
 `;
 
 function App(): React.JSX.Element {
+  // Values
+  const scale = useRef(new Animated.Value(1)).current;
+  const position = useRef(new Animated.Value(0)).current;
+
+  // Animations
+  const onPressIn = Animated.spring(scale, {
+    toValue: 0.95,
+    useNativeDriver: true,
+  });
+  const onPressOut = Animated.spring(scale, {
+    toValue: 1,
+    useNativeDriver: true,
+  });
+  const goCenter = Animated.spring(position, {
+    toValue: 0,
+    useNativeDriver: true,
+  });
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -28,23 +45,12 @@ function App(): React.JSX.Element {
         console.log('touch');
         position.setValue(dx);
       },
-      onPanResponderGrant: () => onPressIn(),
+      onPanResponderGrant: () => onPressIn.start,
       onPanResponderRelease: () => {
-        Animated.parallel([
-          onPressOut,
-          Animated.spring(position, {toValue: 0, useNativeDriver: true}),
-        ]).start();
+        Animated.parallel([onPressOut, goCenter]).start();
       },
     }),
   ).current; // current 중요하다!
-  const scale = useRef(new Animated.Value(1)).current;
-  const position = useRef(new Animated.Value(0)).current;
-  const onPressIn = () =>
-    Animated.spring(scale, {toValue: 0.95, useNativeDriver: true}).start;
-  const onPressOut = Animated.spring(scale, {
-    toValue: 1,
-    useNativeDriver: true,
-  });
 
   return (
     <Container>
