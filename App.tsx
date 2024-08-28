@@ -25,7 +25,7 @@ function App(): React.JSX.Element {
   const moveUp = () => {
     Animated.timing(Y_POSITION, {
       toValue: up ? 200 : -200,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start(toggleUp);
     // Animated.spring은 bounciness, easing 혹은 tension, friction을 써서 스프링처럼 마지막에 튕기는 애니메이션을 줄 수 있음.
   };
@@ -41,6 +41,10 @@ function App(): React.JSX.Element {
     inputRange: [-200, 200],
     outputRange: [100, 0],
   });
+  const bgColor = Y_POSITION.interpolate({
+    inputRange: [-200, 200],
+    outputRange: ['rgb(255, 99, 71)', 'rgb(71, 166, 255)'],
+  });
   return (
     <Container>
       <Pressable onPress={moveUp}>
@@ -48,7 +52,7 @@ function App(): React.JSX.Element {
           style={{
             // opacity,
             borderRadius,
-
+            backgroundColor: bgColor,
             transform: [{rotateY: rotation}, {translateY: Y_POSITION}],
           }}
         />
