@@ -42,12 +42,14 @@ function App(): React.JSX.Element {
   POSITION.addListener(() => console.log(POSITION.getTranslateTransform()));
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponder: () => true, // PanResponder 사용 여부
       onPanResponderMove: (evt, {dx, dy}) => {
+        // 이동시
         console.log(dx, dy);
         POSITION.setValue({x: dx, y: dy});
       },
       onPanResponderRelease: () => {
+        // 놓을 시
         console.log('touch end');
         Animated.spring(POSITION, {
           toValue: {
