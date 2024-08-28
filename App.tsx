@@ -24,6 +24,10 @@ function App(): React.JSX.Element {
   // Values
   const scale = useRef(new Animated.Value(1)).current;
   const position = useRef(new Animated.Value(0)).current;
+  const rotation = position.interpolate({
+    inputRange: [-200, 200],
+    outputRange: ['-15deg', '15deg'],
+  });
 
   // Animations
   const onPressIn = Animated.spring(scale, {
@@ -42,7 +46,7 @@ function App(): React.JSX.Element {
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (_, {dx, dy}) => {
-        console.log('touch');
+        console.log(dx);
         position.setValue(dx);
       },
       onPanResponderGrant: () => onPressIn.start,
@@ -56,7 +60,9 @@ function App(): React.JSX.Element {
     <Container>
       <Card
         {...panResponder.panHandlers}
-        style={{transform: [{scale}, {translateX: position}]}}>
+        style={{
+          transform: [{scale}, {translateX: position}, {rotateZ: rotation}],
+        }}>
         <Ionicons name="pizza" color="#192a56" size={98} />
       </Card>
     </Container>
