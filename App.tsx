@@ -29,9 +29,13 @@ function App(): React.JSX.Element {
     }).start(toggleUp);
     // Animated.spring은 bounciness, easing 혹은 tension, friction을 써서 스프링처럼 마지막에 튕기는 애니메이션을 줄 수 있음.
   };
-  const opacity = Y_POSITION.interpolate({
-    inputRange: [-200, 0, 200], // 입력 값의 범위, 항상 음수부터 양수로 올라가야 함.
-    outputRange: [1, 0, 1], // 출력 값의 범위
+  // const opacity = Y_POSITION.interpolate({
+  //   inputRange: [-200, 0, 200], // 입력 값의 범위, 항상 음수부터 양수로 올라가야 함.
+  //   outputRange: [1, 0, 1], // 출력 값의 범위
+  // });
+  const rotation = Y_POSITION.interpolate({
+    inputRange: [-200, 300],
+    outputRange: ['-360deg', '360deg'],
   });
   const borderRadius = Y_POSITION.interpolate({
     inputRange: [-200, 200],
@@ -42,9 +46,10 @@ function App(): React.JSX.Element {
       <Pressable onPress={moveUp}>
         <AnimatedBox
           style={{
-            opacity,
+            // opacity,
             borderRadius,
-            transform: [{translateY: Y_POSITION}],
+
+            transform: [{rotateY: rotation}, {translateY: Y_POSITION}],
           }}
         />
       </Pressable>
