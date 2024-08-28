@@ -10,7 +10,7 @@ const Container = styled.View`
   background-color: #00a8ff;
 `;
 
-const Card = styled.View`
+const Card = styled(Animated.createAnimatedComponent(View))`
   background-color: white;
   width: 300px;
   height: 300px;
@@ -20,14 +20,39 @@ const Card = styled.View`
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
 `;
 
-const AnimatedCard = Animated.createAnimatedComponent(Card);
-
 function App(): React.JSX.Element {
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (_, {dx, dy}) => {
+        console.log('touch');
+        position.setValue(dx);
+      },
+      onPanResponderGrant: () => onPressIn(),
+      onPanResponderRelease: () => {
+        Animated.parallel([
+          onPressOut,
+          Animated.spring(position, {toValue: 0, useNativeDriver: true}),
+        ]).start();
+      },
+    }),
+  ).current; // current 중요하다!
+  const scale = useRef(new Animated.Value(1)).current;
+  const position = useRef(new Animated.Value(0)).current;
+  const onPressIn = () =>
+    Animated.spring(scale, {toValue: 0.95, useNativeDriver: true}).start;
+  const onPressOut = Animated.spring(scale, {
+    toValue: 1,
+    useNativeDriver: true,
+  });
+
   return (
     <Container>
-      <AnimatedCard>
+      <Card
+        {...panResponder.panHandlers}
+        style={{transform: [{scale}, {translateX: position}]}}>
         <Ionicons name="pizza" color="#192a56" size={98} />
-      </AnimatedCard>
+      </Card>
     </Container>
   );
 }
