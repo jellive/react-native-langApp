@@ -21,66 +21,16 @@ const AnimatedBox = Animated.createAnimatedComponent(Box);
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
 
 function App(): React.JSX.Element {
-  // const [up, setUp] = useState(false);
   // const POSITION = useRef(new Animated.ValueXY({x: 0, y: 0})).current; // 재렌더링 방지(재렌더링 되면 이게 다시 0이 되면서 애니메이션이 끝나면 원래대로 돌아옴)
   const POSITION = useRef(
     new Animated.ValueXY({
-      x: -SCREEN_WIDTH / 2 + 100,
-      y: -SCREEN_HEIGHT / 2 + 100,
+      x: 0,
+      y: 0,
     }),
   ).current;
-  // const toggleUp = () => setUp(prev => !prev);
-  const topLeft = Animated.timing(POSITION, {
-    toValue: {
-      x: -SCREEN_WIDTH / 2 + 100,
-      y: -SCREEN_HEIGHT / 2 + 100,
-    },
-    useNativeDriver: false,
-  });
-
-  const bottomLeft =
-    // Animated.timing(POSITION, {
-    //   toValue: up ? 200 : -200,
-    //   useNativeDriver: false,
-    // }).start(toggleUp);
-    // Animated.spring은 bounciness, easing 혹은 tension, friction을 써서 스프링처럼 마지막에 튕기는 애니메이션을 줄 수 있음.
-
-    Animated.timing(POSITION, {
-      toValue: {
-        x: -SCREEN_WIDTH / 2 + 100,
-        y: SCREEN_HEIGHT / 2 - 100,
-      },
-      useNativeDriver: false,
-    });
-  const bottomRight = Animated.timing(POSITION, {
-    toValue: {
-      x: SCREEN_WIDTH / 2 - 100,
-      y: SCREEN_HEIGHT / 2 - 100,
-    },
-    useNativeDriver: false,
-  });
-
-  const topRight = Animated.timing(POSITION, {
-    toValue: {
-      x: SCREEN_WIDTH / 2 - 100,
-      y: -SCREEN_HEIGHT / 2 + 100,
-    },
-    useNativeDriver: false,
-  });
-
   const sequence = () => {
-    Animated.loop(
-      Animated.sequence([bottomLeft, bottomRight, topRight, topLeft]),
-    ).start();
+    Animated.loop(Animated.sequence([])).start();
   };
-  // const opacity = Y_POSITION.interpolate({
-  //   inputRange: [-200, 0, 200], // 입력 값의 범위, 항상 음수부터 양수로 올라가야 함.
-  //   outputRange: [1, 0, 1], // 출력 값의 범위
-  // });
-  const rotation = POSITION.y.interpolate({
-    inputRange: [-200, 300],
-    outputRange: ['-360deg', '360deg'],
-  });
   const borderRadius = POSITION.y.interpolate({
     inputRange: [-200, 200],
     outputRange: [100, 0],
