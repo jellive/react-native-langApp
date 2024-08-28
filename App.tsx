@@ -42,20 +42,18 @@ function App(): React.JSX.Element {
   POSITION.addListener(() => console.log(POSITION.getTranslateTransform()));
   return (
     <Container>
-      <Pressable onPress={sequence}>
-        <AnimatedBox
-          style={{
-            // opacity,
-            borderRadius,
-            backgroundColor: bgColor,
-            transform: [
-              // {rotateY: rotation},
-              {translateX: POSITION.x},
-              {translateY: POSITION.y},
-            ],
-          }}
-        />
-      </Pressable>
+      <AnimatedBox
+        style={{
+          // opacity,
+          borderRadius,
+          backgroundColor: bgColor,
+          transform: [
+            // {rotateY: rotation},
+            {translateX: POSITION.x},
+            {translateY: POSITION.y},
+          ],
+        }}
+      />
     </Container>
   );
 }
