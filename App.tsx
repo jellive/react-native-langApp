@@ -43,22 +43,32 @@ function App(): React.JSX.Element {
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true, // PanResponder 사용 여부
+      onPanResponderGrant: () => {
+        // 시작될떄 켜짐
+        POSITION.setOffset({
+          // POSITION의 마지막 터치부분을 기준으로 설정하는 함수
+          x: POSITION.x._value,
+          y: POSITION.y._value,
+        });
+      },
       onPanResponderMove: (evt, {dx, dy}) => {
         // 이동시
-        console.log(dx, dy);
+        console.log(dx, dy); // dx, dy는 항상 0에서 시작한다. 그래서 위의 offset과 더해야한다.
         POSITION.setValue({x: dx, y: dy});
       },
-      onPanResponderRelease: () => {
-        // 놓을 시
-        console.log('touch end');
-        Animated.spring(POSITION, {
-          toValue: {
-            x: 0,
-            y: 0,
-          },
-          bounciness: 20,
-          useNativeDriver: false,
-        }).start();
+      onPanResponderRelease: (_, {dx, dy}) => {
+        // // 놓을 시
+        // console.log('touch end');
+        // Animated.spring(POSITION, {
+        //   toValue: {
+        //     x: 0,
+        //     y: 0,
+        //   },
+        //   bounciness: 20,
+        //   useNativeDriver: false,
+        // }).start();
+        POSITION.flattenOffset(); // offset에 있을떄에는 0이 아닌 다른 곳에서 시작한다. (손가락이 움직인 이전거리들의 합)
+        // offset을 비우고(0,0) offset의 값을 x, y에 대입한다.
       },
     }),
   ).current;
