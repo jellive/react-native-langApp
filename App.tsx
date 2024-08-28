@@ -56,6 +56,7 @@ function App(): React.JSX.Element {
             x: 0,
             y: 0,
           },
+          bounciness: 20,
           useNativeDriver: false,
         }).start();
       },
