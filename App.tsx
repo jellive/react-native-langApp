@@ -47,6 +47,16 @@ function App(): React.JSX.Element {
         console.log(dx, dy);
         POSITION.setValue({x: dx, y: dy});
       },
+      onPanResponderRelease: () => {
+        console.log('touch end');
+        Animated.spring(POSITION, {
+          toValue: {
+            x: 0,
+            y: 0,
+          },
+          useNativeDriver: false,
+        }).start();
+      },
     }),
   ).current;
   console.log(panResponder);
@@ -58,7 +68,7 @@ function App(): React.JSX.Element {
           // opacity,
           borderRadius,
           backgroundColor: bgColor,
-          transform: [...POSITION.getTranslateTransform()],
+          transform: POSITION.getTranslateTransform(),
         }}
       />
     </Container>
