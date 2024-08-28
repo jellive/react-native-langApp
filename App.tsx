@@ -22,7 +22,13 @@ const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
 
 function App(): React.JSX.Element {
   // const [up, setUp] = useState(false);
-  const POSITION = useRef(new Animated.ValueXY({x: 0, y: 0})).current; // 재렌더링 방지(재렌더링 되면 이게 다시 0이 되면서 애니메이션이 끝나면 원래대로 돌아옴)
+  // const POSITION = useRef(new Animated.ValueXY({x: 0, y: 0})).current; // 재렌더링 방지(재렌더링 되면 이게 다시 0이 되면서 애니메이션이 끝나면 원래대로 돌아옴)
+  const POSITION = useRef(
+    new Animated.ValueXY({
+      x: -SCREEN_WIDTH / 2 + 100,
+      y: -SCREEN_HEIGHT / 2 + 100,
+    }),
+  ).current;
   // const toggleUp = () => setUp(prev => !prev);
   const topLeft = Animated.timing(POSITION, {
     toValue: {
@@ -64,7 +70,7 @@ function App(): React.JSX.Element {
 
   const sequence = () => {
     Animated.loop(
-      Animated.sequence([topLeft, bottomLeft, bottomRight, topRight]),
+      Animated.sequence([bottomLeft, bottomRight, topRight, topLeft]),
     ).start();
   };
   // const opacity = Y_POSITION.interpolate({
