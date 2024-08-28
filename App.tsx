@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {Animated, TouchableOpacity, Pressable, Dimensions} from 'react-native';
+import {Animated, Dimensions, PanResponder} from 'react-native';
 import styled from 'styled-components/native';
 
 const Container = styled.View`
@@ -40,18 +40,25 @@ function App(): React.JSX.Element {
     outputRange: ['rgb(255, 99, 71)', 'rgb(71, 166, 255)'],
   });
   POSITION.addListener(() => console.log(POSITION.getTranslateTransform()));
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (evt, {dx, dy}) => {
+        console.log(dx, dy);
+        POSITION.setValue({x: dx, y: dy});
+      },
+    }),
+  ).current;
+  console.log(panResponder);
   return (
     <Container>
       <AnimatedBox
+        {...panResponder.panHandlers} // react에서는 이렇게 상세정보를 그냥 넣을 수 있음.
         style={{
           // opacity,
           borderRadius,
           backgroundColor: bgColor,
-          transform: [
-            // {rotateY: rotation},
-            {translateX: POSITION.x},
-            {translateY: POSITION.y},
-          ],
+          transform: [...POSITION.getTranslateTransform()],
         }}
       />
     </Container>
