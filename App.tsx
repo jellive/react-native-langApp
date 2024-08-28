@@ -20,10 +20,10 @@ const AnimatedBox = Animated.createAnimatedComponent(Box);
 
 function App(): React.JSX.Element {
   const [up, setUp] = useState(false);
-  const Y_POSITION = useRef(new Animated.Value(-200)).current; // 재렌더링 방지(재렌더링 되면 이게 다시 0이 되면서 애니메이션이 끝나면 원래대로 돌아옴)
+  const POSITION = useRef(new Animated.ValueXY({x: 0, y: -200})).current; // 재렌더링 방지(재렌더링 되면 이게 다시 0이 되면서 애니메이션이 끝나면 원래대로 돌아옴)
   const toggleUp = () => setUp(prev => !prev);
   const moveUp = () => {
-    Animated.timing(Y_POSITION, {
+    Animated.timing(POSITION, {
       toValue: up ? 200 : -200,
       useNativeDriver: false,
     }).start(toggleUp);
@@ -33,15 +33,15 @@ function App(): React.JSX.Element {
   //   inputRange: [-200, 0, 200], // 입력 값의 범위, 항상 음수부터 양수로 올라가야 함.
   //   outputRange: [1, 0, 1], // 출력 값의 범위
   // });
-  const rotation = Y_POSITION.interpolate({
+  const rotation = POSITION.y.interpolate({
     inputRange: [-200, 300],
     outputRange: ['-360deg', '360deg'],
   });
-  const borderRadius = Y_POSITION.interpolate({
+  const borderRadius = POSITION.y.interpolate({
     inputRange: [-200, 200],
     outputRange: [100, 0],
   });
-  const bgColor = Y_POSITION.interpolate({
+  const bgColor = POSITION.y.interpolate({
     inputRange: [-200, 200],
     outputRange: ['rgb(255, 99, 71)', 'rgb(71, 166, 255)'],
   });
@@ -53,7 +53,7 @@ function App(): React.JSX.Element {
             // opacity,
             borderRadius,
             backgroundColor: bgColor,
-            transform: [{rotateY: rotation}, {translateY: Y_POSITION}],
+            transform: [{rotateY: rotation}, {translateY: POSITION.y}],
           }}
         />
       </Pressable>
