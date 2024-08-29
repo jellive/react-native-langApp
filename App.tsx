@@ -50,7 +50,35 @@ export default function App() {
   const position = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
   // Animations
 
+  const onPressIn = Animated.spring(scale, {
+    toValue: 0.9,
+    useNativeDriver: true,
+  });
+  const onPressOut = Animated.spring(scale, {
+    toValue: 1,
+    useNativeDriver: true,
+  });
+  const goHome = Animated.spring(position, {
+    toValue: 0,
+    useNativeDriver: true,
+  });
   // Pan Responders
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (_, {dx, dy}) => {
+        position.setValue({x: dx, y: dy});
+      },
+      onPanResponderGrant: () => {
+        onPressIn.start();
+      },
+      onPanResponderRelease: () => {
+        Animated.parallel([onPressOut, goHome]).start();
+
+        // Animated.sequence([onPressOut, goHome]).start(); // sequence는 동시실행이 아닌 순차실행임
+      },
+    }),
+  ).current;
 
   // State
 
@@ -63,6 +91,7 @@ export default function App() {
       </Edge>
       <Center>
         <IconCard
+          {...panResponder.panHandlers}
           style={{
             transform: [...position.getTranslateTransform(), {scale}],
           }}>
