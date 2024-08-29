@@ -20,6 +20,14 @@ const Card = styled(Animated.createAnimatedComponent(View))`
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
 `;
 
+const Btn = styled.TouchableOpacity`
+  margin: 0px 10px;
+`;
+const BtnContainer = styled.View`
+  flex-direction: row;
+  margin-top: 100px;
+`;
+
 function App(): React.JSX.Element {
   // Values
   const scale = useRef(new Animated.Value(1)).current;
@@ -43,6 +51,18 @@ function App(): React.JSX.Element {
     toValue: 0,
     useNativeDriver: true,
   });
+
+  const goLeft = Animated.spring(position, {
+    toValue: -400,
+    tension: 5, // 느리게 애니메이션
+    useNativeDriver: true,
+  });
+
+  const goRight = Animated.spring(position, {
+    toValue: 400,
+    tension: 5,
+    useNativeDriver: true,
+  });
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -55,22 +75,22 @@ function App(): React.JSX.Element {
         console.log('release', dx);
         if (dx < -200) {
           console.log('dismiss to the left');
-          Animated.spring(position, {
-            toValue: -400,
-            useNativeDriver: true,
-          }).start();
+          goLeft.start();
         } else if (dx > 200) {
           console.log('dismiss to the right');
-          Animated.spring(position, {
-            toValue: 400,
-            useNativeDriver: true,
-          }).start();
+          goRight.start();
         } else {
           Animated.parallel([onPressOut, goCenter]).start();
         }
       },
     }),
   ).current; // current 중요하다!
+  const closePress = () => {
+    goLeft.start();
+  };
+  const checkPress = () => {
+    goRight.start();
+  };
 
   return (
     <Container>
@@ -81,6 +101,14 @@ function App(): React.JSX.Element {
         }}>
         <Ionicons name="pizza" color="#192a56" size={98} />
       </Card>
+      <BtnContainer>
+        <Btn onPress={closePress}>
+          <Ionicons name="close-circle" color="white" size={58} />
+        </Btn>
+        <Btn onPress={checkPress}>
+          <Ionicons name="checkmark-circle" color="white" size={58} />
+        </Btn>
+      </BtnContainer>
     </Container>
   );
 }
