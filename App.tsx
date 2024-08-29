@@ -2,12 +2,13 @@ import {Animated, Easing, PanResponder, Text, View} from 'react-native';
 import styled from 'styled-components/native';
 import {Ionicons} from '@expo/vector-icons';
 import icons from './icons';
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 
 const BLACK_COLOR = '#1e272e';
 const GREY = '#485460';
 const GREEN = '#2ecc71';
 const RED = '#e74c3c';
+type IoniconsIconNames = keyof typeof Ionicons;
 
 const Container = styled.View`
   flex: 1;
@@ -108,7 +109,7 @@ export default function App() {
               easing: Easing.linear,
               useNativeDriver: true,
             }),
-          ]).start();
+          ]).start(nextIcon);
 
           // position.setValue({x: 0, y: 0});
           // Animated.timing(position, {
@@ -123,6 +124,14 @@ export default function App() {
   ).current;
 
   // State
+  const [index, setIndex] = useState(0);
+  const nextIcon = () => {
+    setIndex(prev => prev + 1);
+    Animated.parallel([
+      Animated.spring(scale, {toValue: 1, useNativeDriver: true}),
+      Animated.spring(opacity, {toValue: 1, useNativeDriver: true}),
+    ]).start();
+  };
 
   return (
     <Container>
@@ -138,7 +147,7 @@ export default function App() {
             opacity,
             transform: [...position.getTranslateTransform(), {scale}],
           }}>
-          <Ionicons name="beer" color={GREY} size={66} />
+          <Ionicons name={icons[index]} color={GREY} size={66} />
         </IconCard>
       </Center>
       <Edge>
