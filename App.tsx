@@ -75,6 +75,8 @@ function App(): React.JSX.Element {
     toValue: -400,
     tension: 5, // 느리게 애니메이션
     useNativeDriver: true,
+    restSpeedThreshold: 100, // 초당 {number} 픽셀보다 천천히 움직이면 끝난걸로 간주
+    restDisplacementThreshold: 100, // 해당 애니메이션이 {number}px 보다 멀어지면 끝난걸로 간주
   });
 
   const goRight = Animated.spring(position, {
