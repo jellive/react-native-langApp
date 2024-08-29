@@ -1,7 +1,8 @@
 import React, {useRef, useState} from 'react';
-import {Animated, Dimensions, PanResponder, View} from 'react-native';
+import {Animated, Dimensions, PanResponder, View, Text} from 'react-native';
 import styled from 'styled-components/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import icons from './icons';
 
 type IoniconsIconNames = keyof typeof Ionicons;
 const Container = styled.View`
@@ -37,6 +38,8 @@ const CardContainer = styled.View`
   align-items: center;
 `;
 
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('screen');
+
 function App(): React.JSX.Element {
   // Values
   const scale = useRef(new Animated.Value(1)).current;
@@ -48,7 +51,7 @@ function App(): React.JSX.Element {
   });
 
   const secondScale = position.interpolate({
-    inputRange: [-250, 0, 250],
+    inputRange: [-SCREEN_WIDTH, 0, SCREEN_WIDTH],
     outputRange: [1, 0.7, 1],
     extrapolate: 'clamp',
   });
@@ -91,35 +94,46 @@ function App(): React.JSX.Element {
         console.log('release', dx);
         if (dx < -200) {
           console.log('dismiss to the left');
-          goLeft.start();
+          goLeft.start(onDismiss);
         } else if (dx > 200) {
           console.log('dismiss to the right');
-          goRight.start();
+          goRight.start(onDismiss);
         } else {
           Animated.parallel([onPressOut, goCenter]).start();
         }
       },
     }),
   ).current; // current 중요하다!
+  // State
+  const [index, setIndex] = useState(0);
+  const onDismiss = () => {
+    scale.setValue(1);
+    position.setValue(0);
+    setIndex(prev => prev + 1);
+  };
+
   const closePress = () => {
-    goLeft.start();
+    goLeft.start(onDismiss);
   };
   const checkPress = () => {
-    goRight.start();
+    goRight.start(onDismiss);
   };
 
   return (
     <Container>
       <CardContainer>
         <Card style={{transform: [{scale: secondScale}]}}>
-          <Ionicons name={'beer'} color="#192a56" size={98} />
+          {/* <Text>Back card</Text> */}
+          <Ionicons name={icons[index + 1]} color="#192a56" size={98} />
         </Card>
         <Card
           {...panResponder.panHandlers}
           style={{
             transform: [{scale}, {translateX: position}, {rotateZ: rotation}],
           }}>
-          <Ionicons name="pizza" color="#192a56" size={98} />
+          <Ionicons name={icons[index]} color="#192a56" size={98} />
+
+          {/* <Text>Front card</Text> */}
         </Card>
       </CardContainer>
       <BtnContainer>
